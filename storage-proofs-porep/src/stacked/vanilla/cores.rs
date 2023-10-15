@@ -1,4 +1,5 @@
 use std::convert::TryInto;
+use std::io::BufRead;
 use std::sync::{Mutex, MutexGuard};
 
 use anyhow::{format_err, Result};
@@ -11,10 +12,10 @@ type CoreUnit = Vec<CoreIndex>;
 lazy_static! {
     pub static ref TOPOLOGY: Mutex<Topology> = Mutex::new(Topology::new());
     pub static ref CORE_GROUPS: Option<Vec<Mutex<CoreUnit>>> = {
-        let num_producers = &SETTINGS.multicore_sdr_producers;
-        let cores_per_unit = num_producers + 1;
-
-        core_units(cores_per_unit)
+        // let num_producers = &SETTINGS.multicore_sdr_producers;
+        // let cores_per_unit = num_producers + 1;
+        let cores = &SETTINGS.custom_cores;
+        custom_core_units(cores)
     };
 }
 
@@ -221,6 +222,25 @@ fn get_shared_cache_count(topo: &Topology, depth: u32, core_count: usize) -> usi
     1
 }
 
+fn custom_core_units(cfg: String) -> Option<Vec<Mutex<CoreUnit>>> {
+    let rsp = cfg.split("|")
+        .map(|s|
+            s.split(",")
+                .map(|s|s.parse::<usize>().unwrap())
+                .collect::<Vec<_>>()
+        )
+        .collect::<Vec<_>>();
+    Some(
+        rsp
+            .iter()
+            .map(|unit| {
+                let unit_core_index = unit.iter().map(|core| CoreIndex(*core)).collect();
+                Mutex::new(unit_core_index)
+            })
+            .collect::<Vec<_>>(),
+    )
+}
+
 fn core_units(cores_per_unit: usize) -> Option<Vec<Mutex<CoreUnit>>> {
     let topo = TOPOLOGY.lock().expect("poisoned lock");
 
@@ -272,7 +292,8 @@ mod tests {
     #[test]
     fn test_cores() {
         fil_logger::maybe_init();
-        core_units(2);
+        let units = custom_core_units(String::from("0,1|2,3"));
+        print!("{:?}", units)
     }
 
     #[test]
