@@ -16,7 +16,7 @@ lazy_static! {
         //
         // core_units(cores_per_unit)
 
-        let cores = &SETTINGS.custom_cores;
+        let cores = &SETTINGS.multicore_sdr_cores;
         custom_core_units(cores)
     };
 }
