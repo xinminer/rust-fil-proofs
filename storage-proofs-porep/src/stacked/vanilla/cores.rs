@@ -16,8 +16,8 @@ lazy_static! {
         //
         // core_units(cores_per_unit)
 
-        let cores = &SETTINGS.multicore_sdr_cores;
-        custom_core_units(cores.to_string())
+        let cores = SETTINGS.multicore_sdr_cores.clone();
+        custom_core_units(cores)
     };
 }
 
