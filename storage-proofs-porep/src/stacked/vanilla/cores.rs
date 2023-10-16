@@ -225,22 +225,9 @@ fn get_shared_cache_count(topo: &Topology, depth: u32, core_count: usize) -> usi
 }
 
 fn custom_core_units(cfg: String) -> Option<Vec<Mutex<CoreUnit>>> {
-    let rsp = cfg.split("|")
-        .map(|s|
-            s.split(",")
-                .map(|s|s.parse::<usize>().unwrap())
-                .collect::<Vec<_>>()
-        )
-        .collect::<Vec<_>>();
-    Some(
-        rsp
-            .iter()
-            .map(|unit| {
-                let unit_core_index = unit.iter().map(|core| CoreIndex(*core)).collect();
-                Mutex::new(unit_core_index)
-            })
-            .collect::<Vec<_>>(),
-    )
+    let groups = cfg.split("|").collect::<Vec<_>>();
+    let cores = groups.iter().map(|group|{ group.split(",").map(|x|CoreIndex(x.parse::<usize>().unwrap())).collect::<CoreUnit>() }).collect::<Vec<_>>();
+    Some(cores.iter().map(|x| Mutex::new(x.clone())).collect::<Vec<_>>())
 }
 
 fn core_units(cores_per_unit: usize) -> Option<Vec<Mutex<CoreUnit>>> {
@@ -294,7 +281,7 @@ mod tests {
     #[test]
     fn test_cores() {
         fil_logger::maybe_init();
-        let units = custom_core_units(String::from("0,1|2,3"));
+        let units = custom_core_units(String::from("0,64|1,65|2,66|3,67|4,68|5,69|6,70|7,71|8,72|9,73|10,74|11,75|12,76|13,77|14,78"));
         print!("{:?}", units)
     }
 
