@@ -17,7 +17,7 @@ lazy_static! {
         // core_units(cores_per_unit)
 
         let cores = &SETTINGS.multicore_sdr_cores;
-        custom_core_units(cores)
+        custom_core_units(cores.to_string())
     };
 }
 
@@ -224,7 +224,7 @@ fn get_shared_cache_count(topo: &Topology, depth: u32, core_count: usize) -> usi
     1
 }
 
-fn custom_core_units(cfg: *str) -> Option<Vec<Mutex<CoreUnit>>> {
+fn custom_core_units(cfg: String) -> Option<Vec<Mutex<CoreUnit>>> {
     let rsp = cfg.split("|")
         .map(|s|
             s.split(",")
@@ -294,7 +294,8 @@ mod tests {
     #[test]
     fn test_cores() {
         fil_logger::maybe_init();
-        core_units(2);
+        let units = custom_core_units(String::from("0,1|2,3"));
+        print!("{:?}", units)
     }
 
     #[test]
