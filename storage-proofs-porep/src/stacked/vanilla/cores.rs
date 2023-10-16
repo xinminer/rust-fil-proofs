@@ -224,7 +224,7 @@ fn get_shared_cache_count(topo: &Topology, depth: u32, core_count: usize) -> usi
     1
 }
 
-fn custom_core_units(cfg: String) -> Option<Vec<Mutex<CoreUnit>>> {
+fn custom_core_units(cfg: *str) -> Option<Vec<Mutex<CoreUnit>>> {
     let rsp = cfg.split("|")
         .map(|s|
             s.split(",")
