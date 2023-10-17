@@ -10,10 +10,12 @@ type CoreGroup = Vec<CoreIndex>;
 lazy_static! {
     pub static ref TOPOLOGY: Mutex<Topology> = Mutex::new(Topology::new());
     pub static ref CORE_GROUPS: Option<Vec<Mutex<CoreGroup>>> = {
-        let num_producers = &SETTINGS.multicore_sdr_producers;
-        let cores_per_unit = num_producers + 1;
+        // let num_producers = &SETTINGS.multicore_sdr_producers;
+        // let cores_per_unit = num_producers + 1;
 
-        core_groups(cores_per_unit)
+        let cores = $SETTINGS.multicore_sdr_cores;
+
+        custom_core_units(cores.clone())
     };
 }
 
