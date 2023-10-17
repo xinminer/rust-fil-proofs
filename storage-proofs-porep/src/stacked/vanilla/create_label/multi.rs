@@ -254,6 +254,8 @@ fn create_layer_labels(
     crossbeam::thread::scope(|s| {
         let mut runners = Vec::with_capacity(num_producers);
 
+        debug!("num_producers to {:?}", num_producers);
+
         for i in 0..num_producers {
             let layer_labels = &layer_labels;
             let exp_labels = exp_labels.as_ref();
@@ -267,6 +269,7 @@ fn create_layer_labels(
             } else {
                 None
             };
+            debug!("core_index to {:?}", core_index);
             runners.push(s.spawn(move |_| {
                 // This could fail, but we will ignore the error if so.
                 // It will be logged as a warning by `bind_core`.
