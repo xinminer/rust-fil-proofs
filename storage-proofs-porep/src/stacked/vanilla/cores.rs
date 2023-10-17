@@ -13,7 +13,7 @@ lazy_static! {
         // let num_producers = &SETTINGS.multicore_sdr_producers;
         // let cores_per_unit = num_producers + 1;
 
-        let cores = $SETTINGS.multicore_sdr_cores;
+        let cores = &SETTINGS.multicore_sdr_cores;
 
         custom_core_units(cores.clone())
     };
